@@ -190,7 +190,14 @@ class Client {
 			. '&client_secret=' . urlencode($clientSecret)
 			. '&grant_type=authorization_code'
 			. '&code=' . urlencode($code);
-
+			$post = array(
+				'client_id' => $this->_clientId,
+				'redirect_uri' => $this->_state['redirect_uri'],
+				'client_secret' => $clientSecret,
+				'grant_type' => 'authorization_code',
+				'code' => $code,
+			);
+	
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -203,8 +210,11 @@ class Client {
 			// SSL options.
 			CURLOPT_SSL_VERIFYHOST => false,
 			CURLOPT_SSL_VERIFYPEER => false,
-			CURLOPT_TIMEOUT        => 15
+			CURLOPT_TIMEOUT        => 15,
 			
+			// POST
+			CURLOPT_POST => 1,
+			CURLOPT_POSTFIELDS => http_build_query($post)
 		));
 		
 		$result = curl_exec($curl);
